@@ -30,61 +30,32 @@ Connecting your enterprise Data and APIs with the AI Models." https://spring.io/
 ## _Requirements_
 
 - Spring Boot project setup
-- Fundamentals of automated testing
-- TDD - Test Driven Development
-- JUnit
-- Java Vanilla tests
-- Factory pattern
-- Spring annotation for testing
-- JUnit fixtures
-- Unit tests
-- Mockito
-- MockBean
-- Repository tests
-- Service layer tests
-- Web layer tests
-- MockMvc
-- Integration tests
-- Data validation
-- Custom validation
-- Security, login, access control
-- OAuth2, JWT, Cors
-- Database queries
-- Spy Mock
-- Test coverage
-- Jacoco
-- API tests
-- RestAssured
+- Spring-AI
+- OpenAI API Key
 <hr />
 
 ## _Project Structure_
 
-- docs
-    - javadocs
 - src
     - main
     - java
-        - br.dev.ferreiras.springExpert/challengeOne
+        - br.dev.ferreiras.spring-ai
             - config
             - controller
                 - handlers
             - dto
             - entity
             - enums
-            - mapper
             - repository
             - services
                 - exceptions
     - resources
-        - db.migration
-        - certs
     - test
 -
 
 ## _Howto Build and Run_
 
   ```
-  - H2 Database : http://127.0.0.1:8080/h2-console
   - profile active: dev
   - service socket: 127.0.0.1:8080
   - tweak a few knobs to get it up and running
@@ -93,101 +64,84 @@ Connecting your enterprise Data and APIs with the AI Models." https://spring.io/
 
 ## _Screenshot_
 
-[![](./springExpert.webp)]()
+[![](./ai.webp)]()
 
 ## _Links_
 
-- Live Site URL: <a href=https://devsuperior.com.br/curso-java-spring-expert" target="_blank">@devsuperior</a>
+- Live Site URL: <a href=https://spring.io/projects/spring-ai" target="_blank">@spring-ai</a>
 
 ## _Built with_
 
-[![My Skills](https://skillicons.dev/icons?i=java,spring,maven,postgres,redhat,idea,git,github,)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=java,spring,maven,redhat,idea,git,github,)](https://skillicons.dev)
 
 ## _Code Snippet_
 
 ```java
-import java.util.List;
+@Service
+public class OpenAIServiceImpl  implements OpenAIService{
+  /**
+   * @param question - ask a question to openai
+   * @return an answer
+   */
 
-/**
- *
- * @author ricardo@ferreiras.dev.br
- * @version 1.1.12.01
- * @since 1.0
- *
- */
+  private final ChatModel chatModel;
 
-ExtendWith(SpringExtension.class)
-@ContextConfiguration
-public class UserServiceTests {
+  private static final Logger logger = LoggerFactory.getLogger(OpenAIServiceImpl.class);
 
-  @InjectMocks
-  private UserService userService;
 
-  @Mock
-  private UserRepository userRepository;
-
-  @Mock
-  private CustomUserUtil userUtil;
-
-  private String existingUsername, nonExistingUsername;
-  private UserEntity userEntity;
-  private List<UserDetailsProjection> userDetails;
-
-  @BeforeEach
-  void setUp() throws Exception {
-
-    existingUsername = "maria@gmail.com";
-    nonExistingUsername = "ricardo@gmail.com";
-    userEntity = UserFactory.createUserEntity();
-    userDetails = UserDetailsFactory.createCustomAdminClientUser(existingUsername);
-
-    Mockito.when(userRepository.findByUsername(existingUsername)).thenReturn(Optional.of(userEntity));
-    Mockito.when(userRepository.findByUsername(nonExistingUsername)).thenThrow(UsernameNotFoundException.class);
-
-    Mockito.when(userRepository.searchUserAndRolesByUsername(existingUsername)).thenReturn(userDetails);
-    Mockito.when(userRepository.searchUserAndRolesByUsername(nonExistingUsername)).thenReturn(new ArrayList<>());
-
+  public OpenAIServiceImpl(ChatModel chatModel, ObjectMapper objectMapper) {
+    this.chatModel = chatModel;
+    this.objectMapper = objectMapper;
   }
 
-  @Test
-  public void authenticatedShouldReturnUserEntityWhenUserExists() {
+  @Override
+  public String getAnswer(String question) {
+    PromptTemplate promptTemplate = new PromptTemplate(question);
+    Prompt prompt = promptTemplate.create();
+    ChatResponse response = chatModel.call(prompt);
 
-    Mockito.when(userUtil.getLoggedUsername()).thenReturn(existingUsername);
-    UserEntity user = userService.authenticated();
-
-    Assertions.assertNotNull(user);
-    Assertions.assertEquals(user.getUsername(), existingUsername);
-
+    return response.getResult().getOutput().getContent();
   }
 
-  @Test
-  public void authenticatedShouldThrowUsernameNotFoundExceptionWhenUserDoesNotExists() {
+  @Override
+  public Answer getAnswer(Question question) {
+    PromptTemplate promptTemplate = new PromptTemplate(question.question());
+    Prompt prompt = promptTemplate.create();
+    ChatResponse response = chatModel.call(prompt);
 
-    Mockito.doThrow(ClassCastException.class).when(userUtil).getLoggedUsername();
-
-    Assertions.assertThrows(UsernameNotFoundException.class, () -> {
-      userService.authenticated();
-    });
-
+    return new Answer(response.getResult().getOutput().getContent());
   }
 
-  @Test
-  public void loadUserByUsernameShouldReturnUserDetailsWhenUserExists() {
+  @Value("classpath:templates/get-capital-prompt-one.st")
+  private Resource capitalInfoPrompt;
 
-    UserDetails user = userService.loadUserByUsername(existingUsername);
+  @Value("classpath:templates/get-capital-prompt-json.st")
+  private Resource capitalJsonPrompt;
 
-    Assertions.assertNotNull(user);
-    Assertions.assertEquals(user.getUsername(), existingUsername);
+  private ObjectMapper objectMapper;
 
+  @Override
+  public Answer getCapital(CapitalRequest capitalRequest) {
+    PromptTemplate promptTemplate = new PromptTemplate(capitalInfoPrompt);
+    Prompt prompt = promptTemplate.create(Map.of("stateOrCountry", capitalRequest.stateOrCountry()));
+    ChatResponse response = chatModel.call(prompt);
+
+    return new Answer(response.getResult().getOutput().getContent());
   }
 
-  @Test
-  public void loadUserByUsernameShouldThrowUsernameNotFoundExceptionWhenUserDoesNotExists() {
+  @Override
+  public CapitalResponse getCapitalJson(CapitalRequest capitalRequest) {
 
-    Assertions.assertThrows(UsernameNotFoundException.class, () -> {
-      userService.loadUserByUsername(nonExistingUsername);
-    });
+    BeanOutputConverter<CapitalResponse> parser = new BeanOutputConverter<>(CapitalResponse.class);
+    String format = parser.getFormat();
+    PromptTemplate promptTemplate = new PromptTemplate(capitalJsonPrompt);
+    Prompt prompt = promptTemplate.create(Map.of("stateOrCountry", capitalRequest.stateOrCountry(),
+        "format", format));
+    ChatResponse response = chatModel.call(prompt);
 
+    logger.info("Response, {}", response.getResult().getOutput().getContent());
+
+    return parser.convert(response.getResult().getOutput().getContent());
   }
 }
 
@@ -195,19 +149,13 @@ public class UserServiceTests {
 
 ## _Continued development_
 
-- Unit Tests -OK
-- Provide a Json to FrontEnd including
-    - delivery status of each operation to frontend - OK
-    - count of operations consumed by subscriber - OK
-- Subscriber Authentication - OK
-    - Spring JWT-OAuth2 - OK
-- Records Pagination - OK
+- Unit Tests
 
 ### _Useful resources_
 
 - [https://spring.io] Awesome Java framework!.
 - [https://start.spring.io/]  Handy startup tool.
-- [https://mvnrepository.com] Tools that help tackle the beast
+- [https://platform.openai.com/docs/guides/text-generation]  Tools to help tackle the beast
 
 ## _Author_
 

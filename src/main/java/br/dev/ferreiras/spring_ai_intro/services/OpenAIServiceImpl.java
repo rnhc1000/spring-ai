@@ -1,12 +1,9 @@
 package br.dev.ferreiras.spring_ai_intro.services;
 
-
 import br.dev.ferreiras.spring_ai_intro.model.Answer;
 import br.dev.ferreiras.spring_ai_intro.model.CapitalRequest;
 import br.dev.ferreiras.spring_ai_intro.model.CapitalResponse;
 import br.dev.ferreiras.spring_ai_intro.model.Question;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +15,6 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.ai.*;
 import java.util.Map;
 
 @Service
