@@ -1,8 +1,19 @@
 HELP.md
+<<<<<<< HEAD
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+log/
+target/
+logs/
+=======
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+>>>>>>> main
 
 ### STS ###
 .apt_generated
@@ -12,12 +23,24 @@ target/
 .settings
 .springBeans
 .sts4-cache
+<<<<<<< HEAD
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+=======
+>>>>>>> main
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+<<<<<<< HEAD
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+=======
+>>>>>>> main
 
 ### NetBeans ###
 /nbproject/private/
@@ -25,9 +48,12 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
+<<<<<<< HEAD
+=======
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+>>>>>>> main
 
 ### VS Code ###
 .vscode/
