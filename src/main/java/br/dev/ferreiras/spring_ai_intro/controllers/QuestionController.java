@@ -1,5 +1,6 @@
 package br.dev.ferreiras.spring_ai_intro.controllers;
 
+import br.dev.ferreiras.spring_ai_intro.contracts.ServiceOpenAi;
 import br.dev.ferreiras.spring_ai_intro.model.Answer;
 import br.dev.ferreiras.spring_ai_intro.model.CapitalRequest;
 import br.dev.ferreiras.spring_ai_intro.model.CapitalResponse;
@@ -10,26 +11,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class QuestionController {
+public class QuestionController implements ServiceOpenAi {
 
   private final OpenAIService openAIService;
 
   public QuestionController(OpenAIService openAIService) {
+
     this.openAIService = openAIService;
   }
 
-  @PostMapping("/ask")
   public Answer askQuestion(@RequestBody Question question) {
+
     return openAIService.getAnswer(question);
   }
 
-  @PostMapping("/capital")
   public Answer getCapital(@RequestBody CapitalRequest capitalRequest) {
+
     return this.openAIService.getCapital(capitalRequest);
   }
 
-  @PostMapping("/capitalJ")
   public CapitalResponse getCapitalJ(@RequestBody CapitalRequest capitalRequest){
+
     return this.openAIService.getCapitalJson(capitalRequest);
   }
 }
