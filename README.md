@@ -1,7 +1,8 @@
 ## _Roadmap to Spring Certification_ <br />
 
 Continuing to improve my dev skills, now playing with Spring-AI and OpenAPI to be ready for the challenge of developing
-an application that will check a LLM to provide a specif grade to a transaction based on the information collected from the customer
+an application that will check a LLM to provide a specific grade to a transaction based on the information collected 
+from the customer
 
 ## _Table of contents_
 
@@ -20,7 +21,8 @@ an application that will check a LLM to provide a specif grade to a transaction 
 
 ## _Overview_
 
-"Spring AI is an application framework for AI engineering. Its goal is to apply to the AI domain Spring ecosystem design principles such as portability and modular design and 
+"Spring AI is an application framework for AI engineering. Its goal is to apply to the AI domain Spring 
+ecosystem design principles such as portability and modular design and 
 promote using POJOs as the building blocks of an application to the AI domain.
 At its core, Spring AI addresses the fundamental challenge of AI integration: 
 Connecting your enterprise Data and APIs with the AI Models." https://spring.io/projects/spring-ai
@@ -29,8 +31,8 @@ Connecting your enterprise Data and APIs with the AI Models." https://spring.io/
 
 ## _Requirements_
 
-- Spring Boot project setup
-- Spring-AI
+- Spring Boot project setup(https://start.spring.io)
+  - Spring WEB, Spring AI dependencies
 - OpenAI API Key
 <hr />
 
