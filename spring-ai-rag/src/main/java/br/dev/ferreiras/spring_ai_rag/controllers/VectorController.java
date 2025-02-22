@@ -24,8 +24,8 @@ public class VectorController implements IVectorController {
   }
 
   /**
-   * @param question 
-   * @return
+   * @param question - make a question
+   * @return  return answer
    */
   @Override
   public Answer askVectorDatabase(Question question) {
