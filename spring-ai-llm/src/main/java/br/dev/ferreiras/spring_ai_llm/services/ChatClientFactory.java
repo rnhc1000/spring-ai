@@ -10,12 +10,14 @@ public class ChatClientFactory {
 
   private final ChatClient openAIChatClient;
   private final ChatClient anthropicChatClient;
+  private final ChatClient vertexAiChatClient;
 
   public ChatClientFactory(
       @Qualifier("openAIChatClient") ChatClient openAIChatClient,
-      @Qualifier("anthropicChatClient") ChatClient anthropicChatClient) {
+      @Qualifier("anthropicChatClient") ChatClient anthropicChatClient, ChatClient vertexAiChatClient) {
     this.openAIChatClient = openAIChatClient;
     this.anthropicChatClient = anthropicChatClient;
+    this.vertexAiChatClient = vertexAiChatClient;
   }
 
   public ChatClient getChatClient(String modelType) {
@@ -27,6 +29,10 @@ public class ChatClientFactory {
 
       case "anthropic" -> {
         yield anthropicChatClient;
+      }
+
+      case "gemini" -> {
+        yield vertexAiChatClient;
       }
 
       default -> {
@@ -41,6 +47,6 @@ public class ChatClientFactory {
 //    } else if ("anthropic".equalsIgnoreCase(modelType)) {
 //      return anthropicChatClient;
 //    } else {
-//      throw new IllegalArgumentException("Invalid model type: " + modelType);
+//      throw new IllegalStateException("Invalid model type: " + modelType);
 //    }
 }

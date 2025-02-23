@@ -16,15 +16,18 @@ public class ChatService {
     this.chatClientFactory = chatClientFactory;
   }
 
-  public ChatResponse getLLMModelResponse(PromptRequest promptRequest, String model) throws IOException {
+  public ChatResponse getLLMModelResponse(PromptRequest promptRequest, String model)  {
 
     ChatClient chatClient = chatClientFactory.getChatClient(model);
 
-    return chatClient.prompt()
-        .system(s -> s.text(promptRequest.systemPrompt()))
-        .user(u -> u.text(promptRequest.userPrompt()))
-        .call()
-        .chatResponse();
-
+    try {
+      return chatClient.prompt()
+          .system(s -> s.text(promptRequest.systemPrompt()))
+          .user(u -> u.text(promptRequest.userPrompt()))
+          .call()
+          .chatResponse();
+    } catch(RuntimeException exception) {
+      throw new IllegalStateException("Error communicating with external API");
+    }
   }
 }
