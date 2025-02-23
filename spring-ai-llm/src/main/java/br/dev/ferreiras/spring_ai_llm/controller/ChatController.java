@@ -1,5 +1,6 @@
 package br.dev.ferreiras.spring_ai_llm.controller;
 
+import br.dev.ferreiras.spring_ai_llm.contracts.ControllerChat;
 import br.dev.ferreiras.spring_ai_llm.dto.PromptRequest;
 import br.dev.ferreiras.spring_ai_llm.services.ChatService;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
-public class ChatController {
+public class ChatController implements ControllerChat {
 
   private final ChatService chatServices;
 
   @Value("classpath:/prompts/spring-prompt.st")
   private Resource sbPromptTemplate; // default prompt
 
-  private static final List<String> SUPPORTED_MODELS = List.of("openai", "anthropic");
+  private static final List<String> SUPPORTED_MODELS = List.of("openai", "anthropic", "gemini");
 
   public ChatController(ChatService chatServices) {
     this.chatServices = chatServices;
@@ -37,9 +38,8 @@ public class ChatController {
    * @throws IOException on error
    */
 
-  @PostMapping("/askLlm")
-  public ResponseEntity<String> fetchLlmResponse(@RequestParam(value = "model", defaultValue = "openai") String model,
-                                                 @RequestBody(required = false) PromptRequest promptRequest) throws IOException, IOException {
+  public ResponseEntity<String> fetchAnswer(@RequestParam(value = "model", defaultValue = "openai") String model,
+                                                 @RequestBody(required = false) PromptRequest promptRequest) throws IOException {
     if (!SUPPORTED_MODELS.contains(model.toLowerCase())) {
       return ResponseEntity.badRequest()
           .body("Invalid modelType. Supported models are: " + String.join(", ", SUPPORTED_MODELS));

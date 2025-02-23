@@ -20,6 +20,16 @@ spring:
 #      api-key: ${DEEPSEEK_API_KEY}
 #      base_url: https://api.deepseek.com
 #      chat_model: deepseek-chat
+    vertex:
+      ai:
+        gemini:
+          projectId: ${GEMINI_PROJECT_ID}
+          location: us-east4
+        chat:
+          options:
+            model: gemini-1.5-pro-001
+            temperature: 0.5
+        transport: REST
 
 logging:
   level:
