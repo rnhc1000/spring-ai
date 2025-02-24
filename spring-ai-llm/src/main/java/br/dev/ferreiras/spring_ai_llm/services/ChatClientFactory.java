@@ -14,7 +14,8 @@ public class ChatClientFactory {
 
   public ChatClientFactory(
       @Qualifier("openAIChatClient") ChatClient openAIChatClient,
-      @Qualifier("anthropicChatClient") ChatClient anthropicChatClient, ChatClient vertexAiChatClient) {
+      @Qualifier("anthropicChatClient") ChatClient anthropicChatClient,
+      @Qualifier("vertexAiChatClient") ChatClient vertexAiChatClient) {
     this.openAIChatClient = openAIChatClient;
     this.anthropicChatClient = anthropicChatClient;
     this.vertexAiChatClient = vertexAiChatClient;
@@ -22,31 +23,33 @@ public class ChatClientFactory {
 
   public ChatClient getChatClient(String modelType) {
 
-    return switch (modelType) {
-      case "openai" -> {
-        yield openAIChatClient;
-      }
-
-      case "anthropic" -> {
-        yield anthropicChatClient;
-      }
-
-      case "gemini" -> {
-        yield vertexAiChatClient;
-      }
-
-      default -> {
-        throw new IllegalArgumentException("Invalid model type: " + modelType);
-      }
-
-    };
+    if ("openai".equalsIgnoreCase(modelType)) {
+      return openAIChatClient;
+    } else if ("anthropic".equalsIgnoreCase(modelType)) {
+      return anthropicChatClient;
+    } else if ("vertexai".equalsIgnoreCase(modelType)) {
+      return vertexAiChatClient;
+    } else {
+      throw new IllegalStateException("Invalid model type: " + modelType);
+    }
+//    return switch (modelType) {
+//      case "openai" -> {
+//        yield openAIChatClient;
+//      }
+//
+//      case "anthropic" -> {
+//        yield anthropicChatClient;
+//      }
+//
+//      case "gemini" -> {
+//        yield vertexAiChatClient;
+//      }
+//
+//      default -> {
+//        throw new IllegalArgumentException("Invalid model type: " + modelType);
+//      }
+//
+//    };
   }
 
-//    if ("openai".equalsIgnoreCase(modelType)) {
-//      return openAIChatClient;
-//    } else if ("anthropic".equalsIgnoreCase(modelType)) {
-//      return anthropicChatClient;
-//    } else {
-//      throw new IllegalStateException("Invalid model type: " + modelType);
-//    }
 }

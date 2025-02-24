@@ -31,6 +31,9 @@ spring:
             temperature: 0.5
         transport: REST
 
+evaluation:
+  geturl: http://172.17.0.1:8000/
+
 logging:
   level:
     org.springframework: INFO
